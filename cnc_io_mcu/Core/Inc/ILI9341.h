@@ -8,7 +8,7 @@
 
 /*
 Define pins and Output Data Registers
-*/
+ */
 
 //Port data |D7 |D6 |D5 |D4 |D3 |D2 |D1 |D0 |
 //Pin stm32 |PA7|PA6|PA5|PA4|PA3|PA2|PC1|PA0|
@@ -159,36 +159,58 @@ Define pins and Output Data Registers
 
 #define pixels                                                                           (X_max * Y_max)
 
-
-
 void ILI9341_init();
 void ILI9341_GPIO_init();
 void ILI9341_reset();
 void ILI9341_on_off(uint8_t mode);
 void ILI9341_set_rotation(uint8_t value);
-void ILI9341_set_display_window(uint16_t x_pos1, uint16_t y_pos1, uint16_t x_pos2, uint16_t y_pos2);
+void ILI9341_set_display_window(uint16_t x_pos1, uint16_t y_pos1,
+                                uint16_t x_pos2, uint16_t y_pos2);
 void ILI9341_fill(uint16_t colour);
 void ILI9341_fill_area(int x1, int y1, int x2, int y2, uint16_t colour);
+
 uint16_t ILI9341_BGR2RGB(uint16_t colour);
 uint16_t RGB565_converter(uint8_t r, uint8_t g, uint8_t b);
+
 void swap(int *a, int *b);
+
 void ILI9341_draw_pixel(uint16_t x_pos, uint16_t y_pos, uint16_t colour);
 void ILI9341_draw_point(uint16_t x_pos, uint16_t y_pos, uint8_t pen_width, uint16_t colour);
+
 void ILI9341_draw_line(int x1, int y1, int x2, int y2, uint16_t colour);
 void ILI9341_draw_v_line(int x1, int y1, int y2, uint16_t colour);
 void ILI9341_draw_h_line(int x1, int x2, int y1, uint16_t colour);
-void ILI9341_draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, uint8_t fill, uint16_t colour);
-void ILI9341_draw_rectangle(int x1, int y1, int x2,  int y2, uint8_t fill, uint8_t type, uint16_t colour, uint16_t back_colour);
-void ILI9341_draw_h_bar(int x1, int x2, int y1, int bar_width, int bar_value, uint16_t border_colour, uint16_t bar_colour, uint16_t back_colour, uint8_t border);
-void ILI9341_draw_v_bar(int x1, int y1, int y2, int bar_width, int bar_value, uint16_t border_colour, uint16_t bar_colour, uint16_t back_colour, uint8_t border);
+
+void ILI9341_draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3,
+                            uint8_t fill, uint16_t colour);
+void ILI9341_draw_rectangle(int x1, int y1, int x2,  int y2, uint8_t fill,
+                            uint8_t type, uint16_t colour, uint16_t back_colour);
+
+void ILI9341_draw_h_bar(int x1, int x2, int y1, int bar_width, int bar_value,
+                        uint16_t border_colour, uint16_t bar_colour,
+                        uint16_t back_colour, uint8_t border);
+void ILI9341_draw_v_bar(int x1, int y1, int y2, int bar_width, int bar_value,
+                        uint16_t border_colour, uint16_t bar_colour,
+                        uint16_t back_colour, uint8_t border);
+
 void ILI9341_draw_circle(int xc, int yc, int radius, uint8_t fill, uint16_t colour);
-void ILI9341_draw_font_pixel(uint16_t x_pos, uint16_t y_pos, uint16_t colour, uint8_t pixel_size);
-void ILI9341_print_char(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, char ch);
-void ILI9341_print_str(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, char *ch);
-void ILI9341_print_c(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, int value);
-void ILI9341_print_i(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, int value);
-void ILI9341_print_d(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, uint16_t value, uint8_t points);
-void ILI9341_print_f(uint16_t x_pos, uint16_t y_pos, uint8_t font_size, uint16_t colour, uint16_t back_colour, float value, uint8_t points);
+
+void ILI9341_draw_font_pixel(uint16_t x_pos, uint16_t y_pos,
+                            uint16_t colour, uint8_t pixel_size);
+void ILI9341_print_char(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                            uint16_t colour, uint16_t back_colour, char ch);
+void ILI9341_print_str(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                            uint16_t colour, uint16_t back_colour, char *ch);
+
+void ILI9341_print_c(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                    uint16_t colour, uint16_t back_colour, int value);
+void ILI9341_print_i(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                    uint16_t colour, uint16_t back_colour, int value);
+void ILI9341_print_d(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                    uint16_t colour, uint16_t back_colour, uint16_t value, uint8_t points);
+void ILI9341_print_f(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
+                    uint16_t colour, uint16_t back_colour, float value, uint8_t points);
+
 void ILI9341_draw_bmp(int x_pos1, int y_pos1, int x_pos2, int y_pos2, const uint16_t *bitmap);
 
 extern uint16_t MAX_X;
@@ -196,14 +218,14 @@ extern uint16_t MAX_Y;
 extern uint16_t curr_y;
 
 
-#define ILI9341_printf_tft(str, font, back, ...)     			\
-do {															\
-	char buf[128];												\
-	snprintf(buf, 128, str, __VA_ARGS__);						\
-	ILI9341_print_str(5, curr_y, 1, font, back, buf); 			\
-	curr_y += 10;												\
-	if (curr_y > MAX_Y)											\
-		curr_y = 0;												\
-} while(0);
+#define ILI9341_printf_tft(str, font, back, ...)        \
+        do {                                                    \
+            char buf[128];                                      \
+            snprintf(buf, 128, str, __VA_ARGS__);               \
+            ILI9341_print_str(5, curr_y, 1, font, back, buf);   \
+            curr_y += 10;                                       \
+            if (curr_y > MAX_Y)                                 \
+            curr_y = 0;                                     \
+        } while(0);
 
 
