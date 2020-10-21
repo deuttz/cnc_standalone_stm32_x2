@@ -1,3 +1,5 @@
+cnc_io_mcu/Debug/*
+
 # Prerequisites
 *.d
 
