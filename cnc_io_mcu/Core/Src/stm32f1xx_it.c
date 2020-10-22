@@ -23,6 +23,9 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include "keyboard.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -186,6 +189,14 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
+
+  static uint8_t kbd_counter = 0;
+
+  if (kbd_counter == 10) {
+      kbd_counter = 0;
+      Keyboard_scan_next();
+  }
+  kbd_counter++;
 
   /* USER CODE END SysTick_IRQn 1 */
 }

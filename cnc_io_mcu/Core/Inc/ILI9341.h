@@ -11,16 +11,11 @@ Define pins and Output Data Registers
  */
 
 //Port data |D7 |D6 |D5 |D4 |D3 |D2 |D1 |D0 |
-//Pin stm32 |PA7|PA6|PA5|PA4|PA3|PA2|PC1|PA0|
+//Pin stm32 |PA7|PA6|PA5|PA4|PA3|PA2|PA1|PA0|
 //Control pins |RD |WR |RS |CS |RST|
 //Pin stm32    |PB4|PB5|PB6|PB7|PB8|
 #define TFT_CNTRL      RD_GPIO_Port
 #define TFT_DATA       D0_GPIO_Port
-//#define TFT_RD         RD_Pin
-//#define TFT_WR         WR_Pin
-//#define TFT_RS         RS_Pin
-//#define TFT_CS         CS_Pin
-//#define TFT_RST        RST_Pin
 
 #define RD_ACTIVE    TFT_CNTRL->BSRR  = RD_Pin
 #define RD_IDLE      TFT_CNTRL->BRR = RD_Pin
@@ -218,14 +213,14 @@ extern uint16_t MAX_Y;
 extern uint16_t curr_y;
 
 
-#define ILI9341_printf_tft(str, font, back, ...)        \
+#define ILI9341_printf_tft(str, font, back, ...)                \
         do {                                                    \
             char buf[128];                                      \
             snprintf(buf, 128, str, __VA_ARGS__);               \
             ILI9341_print_str(5, curr_y, 1, font, back, buf);   \
             curr_y += 10;                                       \
             if (curr_y > MAX_Y)                                 \
-            curr_y = 0;                                     \
+            curr_y = 0;                                         \
         } while(0);
 
 
