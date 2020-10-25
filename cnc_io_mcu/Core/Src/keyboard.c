@@ -23,7 +23,7 @@ static void ___put_key(uint8_t key)
     key_buffer[__key_buf_index++] = key;
 }
 
-void Keyboard_scan_next(void)
+int Keyboard_scan_next(void)
 {
     static uint8_t scan_stage = 0;
     if (++scan_stage >= 8)
@@ -32,35 +32,44 @@ void Keyboard_scan_next(void)
 
     // on even stage - set pin
     if ((scan_stage & 0x01) == 0) {
-        COL0_GPIO_Port->BRR = COL0_Pin;
-        COL1_GPIO_Port->BRR = COL1_Pin;
-        COL2_GPIO_Port->BRR = COL2_Pin;
-        COL3_GPIO_Port->BRR = COL3_Pin;
+        ROW0_GPIO_Port->BRR = ROW0_Pin;
+        ROW1_GPIO_Port->BRR = ROW1_Pin;
+        ROW2_GPIO_Port->BRR = ROW2_Pin;
+        ROW3_GPIO_Port->BRR = ROW3_Pin;
         switch (row) {
         case 0:
-            COL0_GPIO_Port->BSRR = COL0_Pin;
+            ROW0_GPIO_Port->BSRR = ROW0_Pin;
             break;
         case 1:
-            COL1_GPIO_Port->BSRR = COL1_Pin;
+            ROW1_GPIO_Port->BSRR = ROW1_Pin;
             break;
         case 2:
-            COL2_GPIO_Port->BSRR = COL2_Pin;
+            ROW2_GPIO_Port->BSRR = ROW2_Pin;
             break;
         case 3:
-            COL3_GPIO_Port->BSRR = COL3_Pin;
+            ROW3_GPIO_Port->BSRR = ROW3_Pin;
             break;
         }
     // on odd stage - check pins
     } else {
-        if (ROW0_GPIO_Port->IDR & ROW0_Pin)
+        if (COL0_GPIO_Port->IDR & COL0_Pin) {
             ___put_key(0x10 | row);
-        if (ROW1_GPIO_Port->IDR & ROW1_Pin)
+            return 1;
+        }
+        if (COL1_GPIO_Port->IDR & COL1_Pin) {
             ___put_key(0x20 | row);
-        if (ROW2_GPIO_Port->IDR & ROW2_Pin)
+            return 1;
+        }
+        if (COL2_GPIO_Port->IDR & COL2_Pin) {
             ___put_key(0x30 | row);
-        if (ROW3_GPIO_Port->IDR & ROW3_Pin)
+            return 1;
+        }
+        if (COL3_GPIO_Port->IDR & COL3_Pin) {
             ___put_key(0x40 | row);
+            return 1;
+        }
     }
+    return 0;
 }
 
 int Keyboard_get_key(void)

@@ -190,11 +190,13 @@ void SysTick_Handler(void)
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
-  static uint8_t kbd_counter = 0;
+  static int16_t kbd_counter = 0;
 
-  if (kbd_counter == 10) {
-      kbd_counter = 0;
-      Keyboard_scan_next();
+  if (kbd_counter == 50) {
+      if (Keyboard_scan_next())
+          kbd_counter = -250;
+      else
+          kbd_counter = 0;
   }
   kbd_counter++;
 
