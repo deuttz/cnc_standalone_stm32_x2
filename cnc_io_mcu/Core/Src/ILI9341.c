@@ -46,9 +46,9 @@ void setWriteDataBus(void) {
     GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
             |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(TFT_DATA, &GPIO_InitStruct);
 }
 
 void setReadDataBus(void) {
@@ -56,9 +56,9 @@ void setReadDataBus(void) {
     GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
             |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(TFT_DATA, &GPIO_InitStruct);
 }
 
 void ILI9341_init()
@@ -678,22 +678,40 @@ void ILI9341_print_char(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
         x_pos = font_size;
     }
 
-    for(i = 0x00; i < 0x05; i++) {
-        for(j = 0x00; j < 0x08; j++) {
+    if (font_size == 1) {
+        for(i = 0x00; i < 0x05; i++) {
             value = 0x0000;
             value = ((font[((uint8_t)ch) - 0x20][i]));
+            for(j = 0x00; j < 0x08; j++) {
+                if(((value >> j) & 0x01) != 0x00) {
+                    ILI9341_draw_font_pixel(x_pos, y_pos, colour, font_size);
+                } else {
+                    ILI9341_draw_font_pixel(x_pos, y_pos, back_colour, font_size);
+                }
 
-            if(((value >> j) & 0x01) != 0x00) {
-                ILI9341_draw_font_pixel(x_pos, y_pos, colour, font_size);
-            } else {
-                ILI9341_draw_font_pixel(x_pos, y_pos, back_colour, font_size);
+                y_pos += font_size;
             }
 
-            y_pos += font_size;
+            y_pos -= (font_size << 0x03);
+            x_pos += font_size;
         }
+    } else if (font_size == 2) {
+        for(i = 0x00; i < 0x10; i++) {
+            value = 0x0000;
+            value = ((ascii_8x16[((uint8_t)ch) - 0x20][i]));
+            for(j = 0x00; j < 0x08; j++) {
+                if(((value >> j) & 0x01) != 0x00) {
+                    ILI9341_draw_font_pixel(x_pos, y_pos, colour, 1);
+                } else {
+                    ILI9341_draw_font_pixel(x_pos, y_pos, back_colour, 1);
+                }
 
-        y_pos -= (font_size << 0x03);
-        x_pos += font_size;
+                x_pos -= 1;
+            }
+
+            x_pos += (1 << 0x03);
+            y_pos += 1;
+        }
     }
 }
 
@@ -702,9 +720,36 @@ void ILI9341_print_str(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,
                         uint16_t colour, uint16_t back_colour, char *ch)
 {
     do {
-        ILI9341_print_char(x_pos, y_pos, font_size, colour, back_colour, *ch++);
-        x_pos += (font_size * 0x06);
-    } while((*ch >= 0x20) && (*ch <= 0x7F));
+        switch (*ch) {
+            case '\t': {
+                for (int i = 0; i < 4; i++) {
+                    ILI9341_print_char(x_pos, y_pos, font_size, colour, back_colour, 0x20);
+                    x_pos += (font_size * 0x06);
+                }
+            }
+                break;
+            case '\n': {
+                if (font_size == 1) {
+                    curr_y += 10;
+                    y_pos += 10;
+                } else {
+                    curr_y += 16;
+                    y_pos += 16;
+                }
+                if (curr_y > MAX_Y) {
+                    curr_y = 0;
+                    y_pos = 0;
+                }
+            }
+                break;
+            default: {
+                ILI9341_print_char(x_pos, y_pos, font_size, colour, back_colour, *ch);
+                x_pos += (font_size * 0x06);
+            }
+                break;
+        }
+        ch++;
+    } while (((*ch >= 0x20) && (*ch <= 0x7F)) || (*ch == '\t') || (*ch == '\n'));
 }
 
 void ILI9341_print_c(uint16_t x_pos, uint16_t y_pos, uint8_t font_size,

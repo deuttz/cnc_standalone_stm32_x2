@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "ILI9341.h"
+#include "keyboard.h"
 
 /* USER CODE END Includes */
 
@@ -247,7 +248,63 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
         c += 12345;
-        ILI9341_printf_tft("deadbeef %d", White, Black, c);
+        //ILI9341_printf_tft("deadbeef %d", White, Black, c);
+        int ret = Keyboard_get_key();
+        if (ret != -1) {
+            //ILI9341_printf_tft("key pressed %X", White, Black, ret);
+            switch(ret) {
+                case KEY_0:
+                    ILI9341_printf_tft2("key 0\t %X", White, Black, ret);
+                    break;
+                case KEY_1:
+                    ILI9341_printf_tft2("key 1\n\t %X", White, Black, ret);
+                    break;
+                case KEY_2:
+                    ILI9341_printf_tft2("key 2 %X", White, Black, ret);
+                    break;
+                case KEY_3:
+                    ILI9341_printf_tft2("key 3 %X", White, Black, ret);
+                    break;
+                case KEY_4:
+                    ILI9341_printf_tft2("key 4 %X", White, Black, ret);
+                    break;
+                case KEY_5:
+                    ILI9341_printf_tft2_xy(30, 110, "key 5 %X", White, Black, ret);
+                    break;
+                case KEY_6:
+                    ILI9341_printf_tft2_xy(160, 60, "key 6 %X", White, Black, ret);
+                    break;
+                case KEY_7:
+                    ILI9341_printf_tft2_xy(10, 180, "key 7 %X", White, Black, ret);
+                    break;
+                case KEY_8:
+                    ILI9341_printf_tft("key 8 %X", White, Black, ret);
+                    break;
+                case KEY_9:
+                    ILI9341_printf_tft("key 9 %X", White, Black, ret);
+                    break;
+                case KEY_A:
+                    ILI9341_printf_tft("key A %X", White, Black, ret);
+                    break;
+                case KEY_B:
+                    ILI9341_printf_tft("key B %X", White, Black, ret);
+                    break;
+                case KEY_C:
+                    ILI9341_printf_tft("key C %X", White, Black, ret);
+                    break;
+                case KEY_D:
+                    ILI9341_printf_tft("key D %X", White, Black, ret);
+                    break;
+                case KEY_STAR:
+                    ILI9341_printf_tft("key * %X", White, Black, ret);
+                    break;
+                case KEY_DIES:
+                    ILI9341_printf_tft("key # %X", White, Black, ret);
+                    break;
+            }
+        } else {
+            //ILI9341_printf_tft("deadbeef %d", White, Black, c);
+        }
         HAL_Delay(100);
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     }
@@ -387,7 +444,8 @@ static void MX_GPIO_Init(void)
                           |ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, WR_Pin|RS_Pin|CS_Pin|RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, RD_Pin|WR_Pin|RS_Pin|CS_Pin
+                          |RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
@@ -397,32 +455,34 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : D0_Pin D1_Pin D2_Pin D3_Pin
-                           D4_Pin D5_Pin D6_Pin D7_Pin
-                           ROW0_Pin ROW1_Pin ROW2_Pin ROW3_Pin */
+                           D4_Pin D5_Pin D6_Pin D7_Pin */
   GPIO_InitStruct.Pin = D0_Pin|D1_Pin|D2_Pin|D3_Pin
-                          |D4_Pin|D5_Pin|D6_Pin|D7_Pin
-                          |ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin;
+                          |D4_Pin|D5_Pin|D6_Pin|D7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : COL3_Pin COL2_Pin COL1_Pin COL0_Pin */
+  GPIO_InitStruct.Pin = COL3_Pin|COL2_Pin|COL1_Pin|COL0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ROW0_Pin ROW1_Pin ROW2_Pin ROW3_Pin */
+  GPIO_InitStruct.Pin = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : COL0_Pin COL1_Pin COL2_Pin COL3_Pin */
-  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : RD_Pin */
-  GPIO_InitStruct.Pin = RD_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  HAL_GPIO_Init(RD_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : WR_Pin RS_Pin CS_Pin RST_Pin */
-  GPIO_InitStruct.Pin = WR_Pin|RS_Pin|CS_Pin|RST_Pin;
+  /*Configure GPIO pins : RD_Pin WR_Pin RS_Pin CS_Pin
+                           RST_Pin */
+  GPIO_InitStruct.Pin = RD_Pin|WR_Pin|RS_Pin|CS_Pin
+                          |RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }

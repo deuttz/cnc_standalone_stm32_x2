@@ -213,14 +213,38 @@ extern uint16_t MAX_Y;
 extern uint16_t curr_y;
 
 
-#define ILI9341_printf_tft(str, font, back, ...)                \
-        do {                                                    \
-            char buf[128];                                      \
-            snprintf(buf, 128, str, __VA_ARGS__);               \
-            ILI9341_print_str(5, curr_y, 1, font, back, buf);   \
-            curr_y += 10;                                       \
-            if (curr_y > MAX_Y)                                 \
-            curr_y = 0;                                         \
-        } while(0);
+#define ILI9341_printf_tft(str, font, back, ...)        \
+do {                                                    \
+    char buf[128];                                      \
+    snprintf(buf, 128, str, ##__VA_ARGS__);             \
+    ILI9341_print_str(5, curr_y, 1, font, back, buf);   \
+    curr_y += 10;                                       \
+    if (curr_y > MAX_Y)                                 \
+        curr_y = 0;                                     \
+} while(0);
+
+#define ILI9341_printf_tft2(str, font, back, ...)       \
+do {                                                    \
+    char buf[128];                                      \
+    snprintf(buf, 128, str, ##__VA_ARGS__);             \
+    ILI9341_print_str(8, curr_y, 2, font, back, buf);   \
+    curr_y += 16;                                       \
+    if (curr_y > MAX_Y)                                 \
+        curr_y = 0;                                     \
+} while(0);
+
+#define ILI9341_printf_tft_xy(x, y, str, font, back, ...)   \
+do {                                                        \
+    char buf[128];                                          \
+    snprintf(buf, 128, str, ##__VA_ARGS__);                 \
+    ILI9341_print_str(x, y, 1, font, back, buf);            \
+} while(0);
+
+#define ILI9341_printf_tft2_xy(x, y, str, font, back, ...)  \
+do {                                                        \
+    char buf[128];                                          \
+    snprintf(buf, 128, str, ##__VA_ARGS__);                 \
+    ILI9341_print_str(x, y, 2, font, back, buf);            \
+} while(0);
 
 
